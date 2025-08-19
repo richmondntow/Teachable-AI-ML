@@ -19,7 +19,7 @@ ML Libraries: TensorFlow.js (for in-browser training)
 Visualization: Chart.js / D3.js
 📦 Installation & Setup
 Clone the repository
-git clone https://github.com/yourusername/teachable-ai-ml.git
+git clone https://github.com/richmondntow/teachable-ai-ml.git
 cd teachable-ai-ml
 Open the project
 Since this is a web-based project, simply open index.html in your browser.
