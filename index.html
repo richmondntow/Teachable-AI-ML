@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teachable Machine Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="login-container" class="container">
+  <h1>Login</h1>
+  <form id="login-form">
+    <input type="email" id="login-email" placeholder="Email" required>
+    <input type="password" id="login-password" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+  <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+</div>
+
+<!-- SIGNUP PAGE -->
+<div id="signup-container" class="container hidden">
+  <h1>Sign Up</h1>
+  <form id="signup-form">
+    <input type="text" id="signup-first" placeholder="First Name" required>
+    <input type="text" id="signup-last" placeholder="Last Name" required>
+    <input type="email" id="signup-email" placeholder="Email" required>
+    <input type="password" id="signup-password" placeholder="Password" required>
+    <input type="password" id="signup-confirm-password" placeholder="Confirm Password" required>
+    <button type="submit">Sign Up</button>
+  </form>
+  <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="dashboard-container" class="hidden">
+  <!-- Top corner menu -->
+  <div class="menu">
+    <button id="menu-profile">Profile</button>
+    <button id="menu-howto">How to Use</button>
+    <button id="menu-about">About</button>
+    <button id="menu-logout">Log Out</button>
+  </div>
+
+  <!-- Center message -->
+  <div id="welcome-message" class="centered-message"></div>
+
+  <!-- Sections -->
+  <div id="profile-section" class="section hidden"></div>
+  <div id="howto-section" class="section hidden"></div>
+  <div id="about-section" class="section hidden"></div>
+  <div id="train-section" class="section hidden">
+    <h2>Train ML Model</h2>
+    <form id="train-form">
+      <input type="file" id="csv-file" required>
+      <select id="task-select" required>
+        <option value="">Select Task</option>
+        <option value="classification">Classification</option>
+        <option value="regression">Regression</option>
+        <option value="clustering">Clustering</option>
+        <option value="anomaly_detection">Anomaly Detection</option>
+      </select>
+      <input type="text" id="target-column" placeholder="Target Column (if needed)">
+      <button type="submit">Train</button>
+    </form>
+    <canvas id="metrics-chart"></canvas>
+    <pre id="metrics-output"></pre>
+  </div>
+
+  <!-- Train ML button -->
+  <button id="btn-train-model" class="train-btn">Train ML Model</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+
