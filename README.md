@@ -47,3 +47,67 @@ Commit changes
 Open a pull request
 📜 License
 free to use, modify, and learn from.
+
+## PyTorch CUDA training and TensorRT inference lab
+
+The original scikit-learn web app remains available. `deep_learning.py` adds an
+optional CLI lab with a three-layer neural network on a **synthetic** 16-feature
+classification dataset. This is a demonstrator, not a production training service.
+No GPU speedup or production accuracy claim is implied.
+
+### CPU installation and validation
+
+```sh
+python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements-deep-learning.txt
+python -m pytest tests/test_deep_learning.py -q
+python deep_learning.py train --device cpu
+python deep_learning.py benchmark --device cpu
+python deep_learning.py export
+```
+
+### NVIDIA GPU training
+
+Install a CUDA-compatible PyTorch wheel using the official PyTorch installer for
+your driver: https://pytorch.org/get-started/locally/ . Then run:
+
+```sh
+python deep_learning.py train --device cuda --amp --output artifacts/cuda-amp
+python deep_learning.py benchmark --device cuda --output artifacts/cuda-amp
+python deep_learning.py export --output artifacts/cuda-amp
+```
+
+The training loop moves model and batches to CUDA and uses autocast plus gradient
+scaling for optional FP16 mixed precision. Explicit CUDA requests fail clearly
+when unavailable; `--device auto` falls back to CPU. JSON reports record hardware,
+PyTorch/CUDA versions, seed, loss, holdout accuracy and elapsed training time.
+Model checkpoints contain only state dictionaries and metadata.
+
+### Optional TensorRT inference
+
+TensorRT accelerates inference, not this training loop. In a separate NVIDIA GPU
+environment install compatible CUDA, cuDNN, TensorRT and `onnxruntime-gpu` per
+https://onnxruntime.ai/docs/execution-providers/TensorRT-ExecutionProvider.html .
+Remove CPU `onnxruntime` before installing the GPU package. Then:
+
+```sh
+python deep_learning.py benchmark --backend tensorrt --device cuda --output artifacts/cuda-amp
+```
+
+This explicitly selects the TensorRT execution provider, enables FP16 and engine
+caching, verifies numerical and prediction parity against PyTorch CPU, warms up,
+and writes measured throughput/latency. CUDA fallback is allowed for unsupported
+operators: this is not proof of complete TensorRT graph coverage. Inspect ONNX
+Runtime profiling before claiming all layers run in TensorRT. Engines are specific
+to hardware/software combinations and should be rebuilt when the environment changes.
+
+### Honest performance comparisons
+
+Use the same checkpoint, batch size, iterations and machine for comparisons.
+PyTorch CUDA timing synchronizes before and after measurement. Both backends
+start with CPU inputs and return CPU outputs, including host/device transfers
+inside their timed loops. Compare end-to-end latency, not isolated kernel speed. The tiny network may be faster on CPU. Do not publish
+speedup figures until measured on real hardware. CPU CI checks learning, checkpoint
+reload, dynamic-batch ONNX parity, inference timing and invalid configurations;
+CUDA tests skip without hardware. GPU and TensorRT paths require separate validation.
